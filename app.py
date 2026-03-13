@@ -5,8 +5,8 @@ import plotly.express as px
 # Categories with keywords
 categories = {
     'Academic': ['exam', 'marks', 'syllabus', 'assignment', 'faculty', 'teacher', 'professor', 'test', 'semester', 'grade', 'course', 'lecture'],
-    'Hostel': ['wifi', 'room', 'mess', 'food', 'hostel', 'warden', 'roommate', 'accommodation', 'stay', 'internet', 'network'],
-    'Infrastructure': ['library', 'lab', 'classroom', 'projector', 'computer', 'building', 'facility', 'equipment', 'ac', 'furniture', 'maintenance'],
+    'Hostel': ['wifi', 'room', 'mess', 'food', 'hostel', 'warden', 'water', 'filter', 'roommate', 'accommodation', 'stay', 'internet', 'network'],
+    'Infrastructure': ['library', 'lab', 'classroom', 'bench', 'seat', 'chair', 'projector', 'computer', 'building', 'facility', 'equipment', 'ac', 'furniture', 'maintenance'],
     'Administration': ['fees', 'id card', 'scholarship', 'office', 'certificate', 'documents', 'admission', 'payment', 'billing', 'registration']
 }
 
@@ -74,6 +74,43 @@ def generate_insights(df):
         insights.append(f"**{second_category}** is the second most reported issue ({second_percentage:.1f}%).")
     
     return insights
+
+def initialize_filter_state(key, options):
+    current = st.session_state.get(key)
+    valid_values = set(options) | {'All'}
+
+    if not current:
+        st.session_state[key] = ['All']
+        return
+
+    cleaned = [value for value in current if value in valid_values]
+    if not cleaned:
+        st.session_state[key] = ['All']
+        return
+
+    actual_selected = [value for value in cleaned if value != 'All']
+    if len(actual_selected) == len(options):
+        st.session_state[key] = ['All']
+    else:
+        st.session_state[key] = cleaned
+
+def normalize_filter_selection(key, options):
+    selected = st.session_state.get(key, ['All'])
+    actual_selected = [value for value in selected if value != 'All']
+
+    if not selected or not actual_selected and 'All' not in selected:
+        st.session_state[key] = ['All']
+        return
+
+    if 'All' in selected and actual_selected:
+        st.session_state[key] = actual_selected
+        return
+
+    if len(actual_selected) == len(options):
+        st.session_state[key] = ['All']
+
+def resolve_filter_values(selected, options):
+    return options if 'All' in selected else selected
 
 st.set_page_config(page_title="CHRIST University Complaint Intelligence", page_icon="just_logo.png", layout="wide", initial_sidebar_state="auto")
 
@@ -185,11 +222,33 @@ with tab2:
                 with dtab1:
                     st.subheader("Categorized Complaints")
                     fc1, fc2 = st.columns(2)
-                    filter_cat = fc1.multiselect("Filter by Category:", ['All'] + list(df['Category'].unique()), default=['All'])
-                    filter_pri = fc2.multiselect("Filter by Priority:", ['All'] + list(df['Priority'].unique()), default=['All'])
-                    filtered = df.copy()
-                    if 'All' not in filter_cat and filter_cat: filtered = filtered[filtered['Category'].isin(filter_cat)]
-                    if 'All' not in filter_pri and filter_pri: filtered = filtered[filtered['Priority'].isin(filter_pri)]
+                    category_options = sorted(df['Category'].unique().tolist())
+                    priority_options = sorted(df['Priority'].unique().tolist())
+
+                    initialize_filter_state("bulk_filter_category", category_options)
+                    initialize_filter_state("bulk_filter_priority", priority_options)
+
+                    filter_cat = fc1.multiselect(
+                        "Filter by Category:",
+                        ['All'] + category_options,
+                        key="bulk_filter_category",
+                        on_change=normalize_filter_selection,
+                        args=("bulk_filter_category", category_options)
+                    )
+                    filter_pri = fc2.multiselect(
+                        "Filter by Priority:",
+                        ['All'] + priority_options,
+                        key="bulk_filter_priority",
+                        on_change=normalize_filter_selection,
+                        args=("bulk_filter_priority", priority_options)
+                    )
+
+                    selected_categories = resolve_filter_values(filter_cat, category_options)
+                    selected_priorities = resolve_filter_values(filter_pri, priority_options)
+                    filtered = df[
+                        df['Category'].isin(selected_categories)
+                        & df['Priority'].isin(selected_priorities)
+                    ]
                     st.dataframe(filtered, use_container_width=True, hide_index=True)
                     st.caption(f"Showing {len(filtered)} of {len(df)} complaints")
                 
