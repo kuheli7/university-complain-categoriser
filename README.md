@@ -1,146 +1,104 @@
-# Smart Student Complaint Categorization System
+# CHRIST University Complaint Intelligence System
 
-## CIA 3 Assignment - Python Application Development
+A rule-based intelligent complaint categorization system for CHRIST University students. Complaints are automatically classified into categories and assigned a priority level using keyword matching — no machine learning required.
 
-### Project Overview
-A rule-based complaint categorization system designed for CHRIST University students. The system automatically categorizes student complaints into predefined categories using keyword matching.
+---
 
-### Categories
-- **Academic**: Issues related to exams, marks, assignments, faculty
-- **Hostel**: Issues related to accommodation, mess, wifi, room
-- **Infrastructure**: Issues related to library, labs, classrooms, equipment
-- **Administration**: Issues related to fees, documents, scholarships, office
+## Features
 
-### Files Included
-1. **Categorization.ipynb** - Jupyter Notebook with complete analysis and development
-2. **app.py** - Streamlit web application for real-time categorization
-3. **sample_complaints.csv** - Sample data for testing
-4. **requirements.txt** - Python dependencies
-5. **README.md** - This file
+### Single Complaint Analysis
+- Type any complaint and get instant categorization
+- Displays the most recent result with category and priority
+- Full session history shown below — most recent first
 
-### How to Run the Streamlit App
+### Bulk CSV Processing
+- Upload a CSV with a `Complaint_Text` column
+- Processes all entries at once
+- Key metrics: total complaints, top category, high priority count, success rate
+- Auto-generated insights after processing
+- Filter the results table by category and/or priority
+- Download the processed CSV
 
-#### Step 1: Install Dependencies
+### Analytics Dashboard
+- Pie chart and bar chart for category distribution
+- Category and priority breakdown in text form
+- Priority vs Category heatmap
+- High priority complaints highlighted separately
+
+### Smart Priority Detection
+Complaints are automatically assigned a priority based on keywords in the text:
+- **High** — urgent, emergency, broken, not working, critical, asap, severe
+- **Medium** — issue, problem, need, important, please, required, soon
+- **Low** — everything else (default)
+
+---
+
+## Categories
+
+| Category | Keywords |
+|---|---|
+| Academic | exam, marks, syllabus, assignment, faculty, professor, grade, course |
+| Hostel | wifi, room, mess, food, warden, water, accommodation, internet |
+| Infrastructure | library, lab, classroom, projector, computer, equipment, furniture, ac |
+| Administration | fees, id card, scholarship, certificate, documents, payment, registration |
+
+If no keyword matches, the complaint is classified as **Other**.
+
+---
+
+## How to Run Locally
+
 ```bash
 pip install -r requirements.txt
-```
-
-#### Step 2: Run the Streamlit App
-```bash
 streamlit run app.py
 ```
 
-#### Step 3: Access the App
-The app will automatically open in your default browser at:
-```
-http://localhost:8501
-```
+App opens at `http://localhost:8501`
 
-### Features
+---
 
-#### 1. Single Complaint Categorization
-- Enter any complaint in the text box
-- Get instant categorization results
-- Color-coded category display
+## CSV Format
 
-#### 2. Bulk CSV Processing
-- Upload CSV files with multiple complaints
-- Automatic categorization for all entries
-- Visual statistics and charts
-- Download processed data
-
-#### 3. Analytics & Visualization
-- Category distribution bar charts
-- Statistical summaries
-- Percentage breakdowns
-
-### How to Use
-
-#### Single Complaint:
-1. Type your complaint in the text area
-2. Click "Categorize Complaint"
-3. View the predicted category
-
-#### Bulk Processing:
-1. Prepare a CSV file with column: `Complaint_Text`
-2. Upload using the file uploader
-3. View categorized results
-4. Download the processed CSV
-
-### Sample CSV Format
 ```csv
 Complaint_Text
 My exam marks are not updated
-Hostel wifi is not working
+Hostel wifi is not working urgently
 Library computers are slow
 Fees receipt not generated
 ```
 
-### Technical Details
-- **Approach**: Rule-based keyword matching
-- **No Machine Learning**: Simple and transparent logic
-- **Libraries Used**: Streamlit, Pandas, Matplotlib
-- **Type**: Text categorization system
+---
 
-### Innovation Aspects
-- Real-time complaint processing
-- Practical solution for university administration
-- User-friendly interface
-- Bulk processing capability
-- Data export functionality
+## Tech Stack
 
-### Evaluation Rubrics Coverage
-
-#### 1. Implementation (5 Marks)
-✅ Complete working system with both notebook and web app
-✅ Clean, well-documented code
-✅ All requirements implemented
-
-#### 2. Concept Clarity (10 Marks)
-✅ Clear explanation of rule-based categorization
-✅ Step-by-step implementation
-✅ Comprehensive comments and documentation
-
-#### 3. Innovation/Real-time Application (5 Marks)
-✅ Real-time categorization capability
-✅ Practical application for CHRIST University
-✅ Bulk processing for efficiency
-✅ Interactive web interface
-
-#### 4. Complexity (5 Marks)
-✅ Multiple features (single + bulk processing)
-✅ Data visualization and analytics
-✅ CSV export functionality
-✅ Smart keyword matching with count-based selection
-
-### Future Enhancements
-- Add priority levels (High/Medium/Low)
-- Multi-language support
-- Email notifications
-- Database integration
-- Admin panel for keyword management
-- Historical trend analysis
-
-### Project Structure
-```
-Cia 3/
-│
-├── Categorization.ipynb          # Jupyter Notebook
-├── app.py                         # Streamlit Application
-├── sample_complaints.csv          # Sample Data
-├── requirements.txt               # Dependencies
-└── README.md                      # Documentation
-```
-
-### Author Information
-- **Course**: Python Application Development
-- **Institution**: CHRIST University
-- **Assignment**: CIA 3
-- **Type**: Rule-Based Text Categorization System
-
-### Support
-For any issues or questions about this project, refer to the code comments or the detailed explanations in the Jupyter Notebook.
+- **Streamlit** — web interface
+- **Pandas** — data handling
+- **Plotly** — interactive charts
+- **Python** — rule-based NLP logic
 
 ---
 
-**Created for CIA 3 Assignment | CHRIST University | 2026**
+## Project Structure
+
+```
+Cia 3/
+├── app.py                    # Streamlit application
+├── sample_complaints.csv     # Sample data for testing
+├── requirements.txt          # Python dependencies
+├── logo.png                  # Sidebar logo
+└── README.md                 # Documentation
+```
+
+---
+
+## Future Enhancements
+
+- Multi-language support for regional complaints
+- Email or SMS notifications for high priority cases
+- Admin panel for managing and updating keywords
+- Database integration for persistent complaint records
+- Historical trend analysis across semesters
+
+---
+
+**CHRIST University | MCA519A-3 Advanced Python Programming | 2026**
