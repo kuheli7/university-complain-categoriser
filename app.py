@@ -118,6 +118,9 @@ st.set_page_config(page_title="CHRIST University Complaint Intelligence", page_i
 if 'complaints_data' not in st.session_state:
     st.session_state.complaints_data = []
 
+if 'single_complaint_history' not in st.session_state:
+    st.session_state.single_complaint_history = []
+
 st.markdown("""<style>.sidebar-content{font-size:.9rem;line-height:1.6;color:#2c3e50}section[data-testid="stSidebar"]>div:first-child{background-color:transparent!important}section[data-testid="stSidebar"] img{image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;image-rendering:pixelated}[data-testid="stMetricValue"]{color:#000000!important;font-size:1.8rem;font-weight:700}[data-testid="stMetricLabel"]{color:#5a6c7d;font-size:.9rem;font-weight:500}h3,.stMarkdown h3,.stMarkdown h2{color:#1f3c88!important}</style>""", unsafe_allow_html=True)
 
 st.markdown("<div style='text-align:center;padding:1rem 0 1.5rem'><h1 style='font-size:2rem;font-weight:700;color:#1f3c88;margin-bottom:.8rem;letter-spacing:-.3px'>CHRIST University Complaint Intelligence System</h1><p style='font-size:1.05rem;color:#2c3e50;margin-bottom:.5rem;font-weight:500'>Rule-Based Intelligent Complaint Classification for Efficient Campus Management</p><p style='font-size:.88rem;color:#5a6c7d;font-weight:400'>Rule-Based NLP System | Real-Time Analytics | Smart Prioritization</p></div>", unsafe_allow_html=True)
@@ -132,6 +135,7 @@ with st.sidebar:
     st.markdown("---\n\n### Features\nReal-time analysis  \nPriority detection  \nBulk CSV processing  \nInteractive charts  \nExport reports\n</div><br>", unsafe_allow_html=True)
     if st.button("Reset Dashboard", use_container_width=True):
         st.session_state.complaints_data = []
+        st.session_state.single_complaint_history = []
         st.session_state.last_result = None
         st.rerun()
 
@@ -162,7 +166,9 @@ with tab1:
     
     if submit_btn and complaint_input.strip():
         cat, pri = categorize_complaint(complaint_input), detect_priority(complaint_input)
-        st.session_state.complaints_data.append({'Complaint_Text': complaint_input, 'Category': cat, 'Priority': pri})
+        complaint_record = {'Complaint_Text': complaint_input, 'Category': cat, 'Priority': pri}
+        st.session_state.complaints_data.append(complaint_record)
+        st.session_state.single_complaint_history.append(complaint_record)
         st.session_state.last_result = {'category': cat, 'priority': pri, 'text': complaint_input}
         st.rerun()
     elif submit_btn: st.warning("Please enter a complaint to categorize!")
@@ -170,12 +176,20 @@ with tab1:
     if 'last_result' in st.session_state and st.session_state.last_result:
         r = st.session_state.last_result
         st.markdown("---")
-        st.subheader("Results")
+        st.subheader("Most Recent Complaint")
         st.info(f"### Category: {r['category']}")
         ca, cb = st.columns(2)
         ca.write(f"**Priority:** {r['priority']}")
-        cb.write(f"**Total Analyzed This Session:** {len(st.session_state.complaints_data)}")
-        with st.expander("View Original Complaint"): st.write(r['text'])
+        cb.write(f"**Total Analyzed This Session:** {len(st.session_state.single_complaint_history)}")
+        with st.expander("View Complaint Text"): st.write(r['text'])
+
+    if st.session_state.single_complaint_history:
+        st.markdown("---")
+        st.subheader("Session Complaint History")
+        history_df = pd.DataFrame(reversed(st.session_state.single_complaint_history))
+        history_df.index = range(1, len(history_df) + 1)
+        st.dataframe(history_df, use_container_width=True)
+        st.caption(f"Showing all {len(history_df)} complaints from this session · Most recent first")
 
 with tab2:
     st.subheader("Bulk Complaint Processing")
