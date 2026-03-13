@@ -2,6 +2,8 @@
 
 A rule-based intelligent complaint categorization system for CHRIST University students. Complaints are automatically classified into categories and assigned a priority level using keyword matching — no machine learning required.
 
+## Demo Link: https://university-complain-categoriser.streamlit.app/
+
 ---
 
 ## Features
